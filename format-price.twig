@@ -1,0 +1,14 @@
+<script>
+  function formatPrice(price, addCurrencySymbol, escaped) {
+    let formattedPrice = price.toString()
+        .replace(/\{{ global.currency.symbol|convert_encoding('UTF-8', 'HTML')|raw }}/g, "")
+        .replace(/{{ global.currency.symbol|escape('js') }}/g, "")
+        .trim().replace(/,/g, ''),
+      currencySymbol = '{{ global.currency.symbol|convert_encoding('UTF-8', 'HTML')|raw }}',
+      currencySymbolEscaped = '{{ global.currency.symbol|escape('js') }}';
+    if(typeof addCurrencySymbol == 'function'){
+      return formatPrice(addCurrencySymbol(formatPrice(price)), 1, escaped != null ? escaped : price.indexOf(currencySymbolEscaped) != -1);
+    }
+    return addCurrencySymbol ? `${escaped ? currencySymbol : currencySymbolEscaped}${(parseFloat(formattedPrice).toFixed(2)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}` : parseFloat(formattedPrice);
+  }
+</script>
